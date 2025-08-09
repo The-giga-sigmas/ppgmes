@@ -1,0 +1,2022 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="icon" type="image/png" href="Favicon.png">
+    <link rel="apple-touch-icon" href="Favicon.png">
+   <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #0a0a0f;
+            color: #ffffff;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Animated starfield background */
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 3s infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(102, 126, 234, 0.2);
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 2.2em;
+            font-weight: bold;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 30px rgba(102, 126, 234, 0.5);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 25px;
+            list-style: none;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: #ffffff;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+        }
+
+        .nav-links a:hover {
+            background: linear-gradient(45deg, rgba(102, 126, 234, 0.2), rgba(118, 75, 162, 0.2));
+            border-color: rgba(102, 126, 234, 0.5);
+            transform: translateY(-2px);
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-login, .btn-signup {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-login {
+            background: transparent;
+            color: #667eea;
+            border: 1px solid #667eea;
+        }
+
+        .btn-login:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-signup {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-signup:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .user-info {
+            display: none;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            position: relative;
+        }
+
+        .admin-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            width: 15px;
+            height: 15px;
+            background: linear-gradient(45deg, #ffd700, #ffed4e);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            color: #000;
+            font-weight: bold;
+        }
+
+        .admin-avatar {
+            background: linear-gradient(45deg, #ffd700, #ffed4e);
+            color: #000;
+        }
+
+        .logout-btn {
+            background: transparent;
+            border: 1px solid #ff6b6b;
+            color: #ff6b6b;
+            padding: 6px 12px;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background: #ff6b6b;
+            color: white;
+        }
+
+        /* Main container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        /* Search bar */
+        .search-section {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .search-container {
+            position: relative;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 15px 50px 15px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(102, 126, 234, 0.3);
+            border-radius: 25px;
+            color: white;
+            font-size: 16px;
+            backdrop-filter: blur(10px);
+        }
+
+        .search-input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .search-btn {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border: none;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            cursor: pointer;
+            color: white;
+            font-size: 16px;
+        }
+
+        /* Games grid */
+        .section-title {
+            text-align: center;
+            font-size: 2.2em;
+            margin-bottom: 30px;
+            color: #667eea;
+        }
+
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 60px;
+        }
+
+        .game-card {
+            background: linear-gradient(145deg, rgba(15, 15, 25, 0.8), rgba(25, 25, 40, 0.8));
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 0;
+            border: 1px solid rgba(102, 126, 234, 0.2);
+            transition: all 0.4s ease;
+            overflow: hidden;
+            position: relative;
+            cursor: pointer;
+            aspect-ratio: 1;
+        }
+
+        .game-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.1), transparent);
+            transition: left 0.5s;
+        }
+
+        .game-card:hover::before {
+            left: 100%;
+        }
+
+        .game-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 15px 30px rgba(102, 126, 234, 0.3);
+            border-color: rgba(102, 126, 234, 0.6);
+        }
+
+        .game-icon {
+            width: 100%;
+            height: 70%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4em;
+            background: linear-gradient(45deg, rgba(102, 126, 234, 0.2), rgba(118, 75, 162, 0.2));
+            position: relative;
+        }
+
+        .game-info {
+            padding: 15px;
+            height: 30%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .game-title {
+            font-size: 1.1em;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #667eea;
+            text-align: center;
+        }
+
+        .game-category {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.8em;
+            text-align: center;
+        }
+
+        /* Add Game Card Template */
+        .add-game-card {
+            background: linear-gradient(145deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+            border: 2px dashed rgba(102, 126, 234, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .add-game-card:hover {
+            border-color: rgba(102, 126, 234, 0.8);
+            background: linear-gradient(145deg, rgba(102, 126, 234, 0.15), rgba(118, 75, 162, 0.15));
+        }
+
+        .add-icon {
+            font-size: 2.5em;
+            color: rgba(102, 126, 234, 0.7);
+        }
+
+        .add-text {
+            color: rgba(255, 255, 255, 0.7);
+            text-align: center;
+            font-size: 0.9em;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(145deg, rgba(15, 15, 25, 0.95), rgba(25, 25, 40, 0.95));
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 40px;
+            border: 1px solid rgba(102, 126, 234, 0.3);
+            min-width: 400px;
+            max-width: 90vw;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .modal-title {
+            font-size: 2em;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: bold;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(102, 126, 234, 0.3);
+            border-radius: 10px;
+            color: white;
+            font-size: 16px;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 10px rgba(102, 126, 234, 0.3);
+        }
+
+        .form-input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .form-button {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 15px;
+        }
+
+        .form-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .form-switch {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .form-switch a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 24px;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .close-btn:hover {
+            color: #ff6b6b;
+        }
+
+        /* Footer */
+        .footer {
+            background: linear-gradient(135deg, rgba(10, 10, 15, 0.9), rgba(15, 15, 25, 0.9));
+            border-top: 1px solid rgba(102, 126, 234, 0.2);
+            padding: 30px 0;
+            text-align: center;
+            margin-top: 60px;
+        }
+
+        .footer p {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        /* Mobile responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .auth-buttons {
+                flex-direction: column;
+                gap: 8px;
+            }
+            
+            .games-grid {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+                gap: 15px;
+            }
+            
+            .logo {
+                font-size: 1.8em;
+            }
+
+            .modal-content {
+                min-width: 300px;
+                padding: 30px 20px;
+            }
+        }
+
+        /* Loading animation */
+        .loading {
+            opacity: 0;
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Protected content */
+        .protected-content {
+            display: none;
+        }
+
+        .guest-message {
+            text-align: center;
+            padding: 60px 20px;
+            background: linear-gradient(145deg, rgba(15, 15, 25, 0.5), rgba(25, 25, 40, 0.5));
+            border-radius: 20px;
+            margin: 40px 0;
+        }
+
+        .guest-message h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 2em;
+        }
+
+        .guest-message p {
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated starfield background -->
+    <div class="stars" id="stars"></div>
+
+    <!-- Header -->
+    <header class="header">
+        <nav class="nav-container">
+            <div class="logo">PP games</div>
+            <ul class="nav-links">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#games">Games</a></li>
+                <li><a href="#favorites">Favorites</a></li>
+                <li><a href="#new">New</a></li>
+                <li><a href="#roblox" onclick="openRobloxPlayer()">🎮 Roblox</a></li>
+                <li class="admin-only" style="display: none;"><a href="#admin" onclick="openAdminPanel()">Admin Panel</a></li>
+                <li class="admin-only" style="display: none;"><a href="#proxy" onclick="openProxyBrowser()">Proxy Browser</a></li>
+            </ul>
+            <div class="auth-section">
+                <div class="auth-buttons" id="authButtons">
+                    <button class="btn-login" onclick="openModal('login')">Login</button>
+                    <button class="btn-signup" onclick="openModal('signup')">Sign Up</button>
+                </div>
+                <div class="user-info" id="userInfo">
+                    <span id="welcomeText">Welcome back!</span>
+                    <div class="user-avatar" id="userAvatar">U</div>
+                    <button class="logout-btn" onclick="logout()">Logout</button>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main content -->
+    <div class="container">
+        <!-- Search Section -->
+        <section class="search-section">
+            <div class="search-container">
+                <input type="text" class="search-input" placeholder="Search for games..." id="searchInput">
+                <button class="search-btn" onclick="searchGames()">🔍</button>
+            </div>
+        </section>
+
+        <!-- Guest Message -->
+        <div class="guest-message" id="guestMessage">
+            <h2>🚀 Welcome to PP Games</h2>
+            <p>Join our community to access hundreds of unblocked games, save your favorites, and compete with friends!</p>
+            <button class="btn-signup" onclick="openModal('signup')">Create Free Account</button>
+        </div>
+
+        <!-- Games Section -->
+        <section id="games" class="protected-content">
+            <h2 class="section-title">Game Collection</h2>
+            <div class="games-grid" id="gamesGrid">
+                <!-- Add Game Template Card -->
+                <div class="game-card add-game-card loading">
+                    <div class="add-icon">+</div>
+                    <div class="add-text">
+                        <strong>Add New Game</strong><br>
+                        Copy template below to add games
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Auth Modals -->
+    <div class="modal" id="authModal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeModal()">&times;</button>
+            <div class="modal-header">
+                <h2 class="modal-title" id="modalTitle">Login</h2>
+                <p id="modalSubtitle">Access your gaming hub</p>
+            </div>
+            
+            <!-- Login Form -->
+            <form id="loginForm" onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label class="form-label">Username or Email</label>
+                    <input type="text" class="form-input" placeholder="Enter username or email" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <input type="password" class="form-input" placeholder="Enter password" required>
+                </div>
+                <button type="submit" class="form-button">Login</button>
+                <div class="form-switch">
+                    Don't have an account? <a href="#" onclick="switchToSignup()">Sign up</a>
+                </div>
+            </form>
+
+            <!-- Signup Form -->
+            <form id="signupForm" onsubmit="handleSignup(event)" style="display: none;">
+                <div class="form-group">
+                    <label class="form-label">Username</label>
+                    <input type="text" class="form-input" placeholder="Choose a username" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Email</label>
+                    <input type="email" class="form-input" placeholder="Enter your email" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <input type="password" class="form-input" placeholder="Create a password" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Confirm Password</label>
+                    <input type="password" class="form-input" placeholder="Confirm your password" required>
+                </div>
+                <button type="submit" class="form-button">Create Account</button>
+                <div class="form-switch">
+                    Already have an account? <a href="#" onclick="switchToLogin()">Login</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Roblox Player Modal -->
+    <div class="modal" id="robloxModal">
+        <div class="modal-content" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); min-width: 95vw; min-height: 95vh; max-width: 98vw; max-height: 98vh; padding: 0; overflow: hidden; background: linear-gradient(135deg, rgba(0, 162, 255, 0.1), rgba(0, 102, 204, 0.1));">
+            <!-- Roblox Header -->
+            <div style="background: linear-gradient(135deg, #00a2ff, #0066cc); padding: 15px; color: white; display: flex; align-items: center; justify-content: space-between; border-bottom: 2px solid #0066cc;">
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <div style="background: white; color: #00a2ff; padding: 8px 12px; border-radius: 8px; font-weight: bold; font-size: 1.2em;">R</div>
+                    <h2 style="margin: 0; font-size: 1.5em;">Roblox Player</h2>
+                </div>
+                
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <div id="robloxStatus" style="background: rgba(255, 255, 255, 0.2); padding: 5px 15px; border-radius: 15px; font-size: 0.9em;">
+                        🟢 Ready to Play
+                    </div>
+                    <button onclick="toggleRobloxFullscreen()" style="background: rgba(255, 255, 255, 0.2); border: none; color: white; padding: 8px 12px; border-radius: 5px; cursor: pointer;">⛶</button>
+                    <button class="close-btn" onclick="closeRobloxPlayer()" style="position: static; background: rgba(255, 255, 255, 0.2); border: 1px solid rgba(255, 255, 255, 0.3); border-radius: 50%; width: 35px; height: 35px;">&times;</button>
+                </div>
+            </div>
+
+            <!-- Roblox Navigation -->
+            <div style="background: rgba(0, 162, 255, 0.05); padding: 10px 20px; border-bottom: 1px solid rgba(0, 162, 255, 0.2); display: flex; gap: 20px; align-items: center; flex-wrap: wrap;">
+                <button onclick="loadRobloxHome()" style="background: linear-gradient(45deg, #00a2ff, #0066cc); color: white; border: none; padding: 8px 16px; border-radius: 20px; cursor: pointer; font-weight: bold;">🏠 Home</button>
+                <button onclick="loadRobloxGames()" style="background: rgba(0, 162, 255, 0.2); color: #00a2ff; border: 1px solid #00a2ff; padding: 8px 16px; border-radius: 20px; cursor: pointer; font-weight: bold;">🎮 Games</button>
+                <button onclick="loadRobloxCreate()" style="background: rgba(0, 162, 255, 0.2); color: #00a2ff; border: 1px solid #00a2ff; padding: 8px 16px; border-radius: 20px; cursor: pointer; font-weight: bold;">🛠️ Create</button>
+                <button onclick="loadRobloxRobux()" style="background: rgba(0, 162, 255, 0.2); color: #00a2ff; border: 1px solid #00a2ff; padding: 8px 16px; border-radius: 20px; cursor: pointer; font-weight: bold;">💎 Robux</button>
+                
+                <div style="flex: 1; display: flex; align-items: center; gap: 10px;">
+                    <input type="text" id="robloxSearch" placeholder="Search games or players..." style="flex: 1; max-width: 300px; padding: 8px 15px; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(0, 162, 255, 0.3); border-radius: 20px; color: #333; font-size: 14px;" onkeypress="handleRobloxSearch(event)">
+                    <button onclick="searchRoblox()" style="background: #00a2ff; color: white; border: none; padding: 8px 12px; border-radius: 15px; cursor: pointer;">🔍</button>
+                </div>
+
+                <button onclick="openRobloxSettings()" style="background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.3); color: #00a2ff; padding: 8px 12px; border-radius: 5px; cursor: pointer;">⚙️</button>
+            </div>
+
+            <!-- Roblox Content Area -->
+            <div id="robloxContent" style="height: calc(100% - 120px); position: relative; background: #f8f9fa;">
+                <!-- Welcome Screen -->
+                <div id="robloxWelcome" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; z-index: 10;">
+                    <div style="background: white; padding: 40px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); max-width: 500px;">
+                        <div style="font-size: 4em; margin-bottom: 20px;">🎮</div>
+                        <h2 style="color: #00a2ff; margin-bottom: 15px; font-size: 2em;">Welcome to Roblox!</h2>
+                        <p style="color: #666; margin-bottom: 25px; line-height: 1.6;">Experience millions of games created by players worldwide. Build, play, and explore in the ultimate virtual universe.</p>
+                        
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 25px;">
+                            <button onclick="playPopularGame('Adopt Me')" style="background: linear-gradient(45deg, #ff6b9d, #c44569); color: white; border: none; padding: 15px; border-radius: 10px; cursor: pointer; font-weight: bold;">🐾 Adopt Me!</button>
+                            <button onclick="playPopularGame('Brookhaven')" style="background: linear-gradient(45deg, #4834d4, #686de0); color: white; border: none; padding: 15px; border-radius: 10px; cursor: pointer; font-weight: bold;">🏘️ Brookhaven RP</button>
+                            <button onclick="playPopularGame('Arsenal')" style="background: linear-gradient(45deg, #ff9ff3, #f368e0); color: white; border: none; padding: 15px; border-radius: 10px; cursor: pointer; font-weight: bold;">🔫 Arsenal</button>
+                            <button onclick="playPopularGame('Tower of Hell')" style="background: linear-gradient(45deg, #ff3838, #ff6b6b); color: white; border: none; padding: 15px; border-radius: 10px; cursor: pointer; font-weight: bold;">🗼 Tower of Hell</button>
+                        </div>
+                        
+                        <button onclick="loadRobloxGames()" style="background: linear-gradient(45deg, #00a2ff, #0066cc); color: white; border: none; padding: 12px 30px; border-radius: 25px; cursor: pointer; font-weight: bold; font-size: 1.1em;">Browse All Games</button>
+                    </div>
+                </div>
+
+                <!-- Game Frame -->
+                <iframe id="robloxFrame" style="width: 100%; height: 100%; border: none; display: none; background: white;"></iframe>
+                
+                <!-- Game Grid -->
+                <div id="robloxGameGrid" style="display: none; padding: 20px; height: 100%; overflow-y: auto;">
+                    <!-- Games will be populated here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Roblox Settings Modal -->
+    <div class="modal" id="robloxSettingsModal">
+        <div class="modal-content" style="min-width: 500px;">
+            <button class="close-btn" onclick="closeRobloxSettings()">&times;</button>
+            <div class="modal-header">
+                <h2 class="modal-title" style="color: #00a2ff;">🎮 Roblox Settings</h2>
+                <p>Configure your Roblox experience</p>
+            </div>
+            
+            <div style="display: grid; gap: 20px;">
+                <div>
+                    <label class="form-label">Graphics Quality</label>
+                    <select class="form-input" id="robloxGraphics">
+                        <option value="1">Low (1)</option>
+                        <option value="5">Medium (5)</option>
+                        <option value="10" selected>High (10)</option>
+                        <option value="21">Ultra (21)</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label class="form-label">Volume</label>
+                    <input type="range" min="0" max="100" value="50" id="robloxVolume" style="width: 100%;">
+                    <div style="text-align: center; color: rgba(255, 255, 255, 0.7); margin-top: 5px;" id="volumeDisplay">50%</div>
+                </div>
+                
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <input type="checkbox" id="robloxFullscreen" style="width: auto;">
+                    <label for="robloxFullscreen" style="color: rgba(255, 255, 255, 0.8);">Start games in fullscreen</label>
+                </div>
+                
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <input type="checkbox" id="robloxChat" checked style="width: auto;">
+                    <label for="robloxChat" style="color: rgba(255, 255, 255, 0.8);">Enable in-game chat</label>
+                </div>
+                
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <input type="checkbox" id="robloxSafety" checked style="width: auto;">
+                    <label for="robloxSafety" style="color: rgba(255, 255, 255, 0.8);">Enable safety features</label>
+                </div>
+                
+                <div>
+                    <label class="form-label">Preferred Server Region</label>
+                    <select class="form-input" id="robloxRegion">
+                        <option value="auto">Auto-detect</option>
+                        <option value="us-east">US East</option>
+                        <option value="us-west">US West</option>
+                        <option value="eu">Europe</option>
+                        <option value="asia">Asia</option>
+                    </select>
+                </div>
+                
+                <button class="form-button" onclick="saveRobloxSettings()">Save Settings</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Proxy Browser Modal -->
+    <div class="modal" id="proxyModal">
+        <div class="modal-content" style="min-width: 90vw; min-height: 90vh; max-width: 95vw; max-height: 95vh; padding: 0; overflow: hidden;">
+            <div style="background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1)); padding: 15px; border-bottom: 1px solid rgba(102, 126, 234, 0.2); display: flex; align-items: center; gap: 15px;">
+                <button class="close-btn" onclick="closeProxyBrowser()" style="position: static; background: rgba(255, 107, 107, 0.2); border: 1px solid #ff6b6b; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;">&times;</button>
+                
+                <div style="flex: 1; display: flex; align-items: center; gap: 10px;">
+                    <button onclick="proxyBack()" style="background: rgba(102, 126, 234, 0.2); border: 1px solid #667eea; border-radius: 5px; color: white; padding: 5px 10px; cursor: pointer;">←</button>
+                    <button onclick="proxyForward()" style="background: rgba(102, 126, 234, 0.2); border: 1px solid #667eea; border-radius: 5px; color: white; padding: 5px 10px; cursor: pointer;">→</button>
+                    <button onclick="proxyReload()" style="background: rgba(102, 126, 234, 0.2); border: 1px solid #667eea; border-radius: 5px; color: white; padding: 5px 10px; cursor: pointer;">🔄</button>
+                    
+                    <input type="text" id="proxyUrl" placeholder="Enter URL (e.g., google.com, youtube.com)" style="flex: 1; padding: 8px 12px; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(102, 126, 234, 0.3); border-radius: 20px; color: white; font-size: 14px;" onkeypress="handleProxyEnter(event)">
+                    
+                    <button onclick="proxyNavigate()" style="background: linear-gradient(45deg, #667eea, #764ba2); border: none; border-radius: 15px; color: white; padding: 8px 16px; cursor: pointer; font-weight: bold;">Go</button>
+                </div>
+                
+                <div style="display: flex; gap: 10px;">
+                    <button onclick="openProxySettings()" style="background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.3); border-radius: 5px; color: white; padding: 5px 10px; cursor: pointer;">⚙️</button>
+                    <button onclick="toggleFullscreen()" style="background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.3); border-radius: 5px; color: white; padding: 5px 10px; cursor: pointer;">⛶</button>
+                </div>
+            </div>
+            
+            <div id="proxyContent" style="height: calc(100% - 60px); position: relative; background: #ffffff;">
+                <iframe id="proxyFrame" style="width: 100%; height: 100%; border: none; background: white;"></iframe>
+                <div id="proxyWelcome" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; color: #333;">
+                    <div style="font-size: 3em; margin-bottom: 20px;">🌐</div>
+                    <h2 style="color: #667eea; margin-bottom: 15px;">Proxy Browser</h2>
+                    <p style="color: #666; margin-bottom: 25px;">Browse the web securely through our proxy service</p>
+                    <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-bottom: 20px;">
+                        <button onclick="quickProxy('google.com')" style="background: #4285f4; color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer;">Google</button>
+                        <button onclick="quickProxy('youtube.com')" style="background: #ff0000; color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer;">YouTube</button>
+                        <button onclick="quickProxy('github.com')" style="background: #333; color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer;">GitHub</button>
+                        <button onclick="quickProxy('reddit.com')" style="background: #ff4500; color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer;">Reddit</button>
+                        <button onclick="quickProxy('stackoverflow.com')" style="background: #f48024; color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer;">Stack Overflow</button>
+                    </div>
+                    <p style="color: #999; font-size: 0.9em;">⚠️ This proxy browser allows you to access external websites securely through PPexpress Browser</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Proxy Settings Modal -->
+    <div class="modal" id="proxySettingsModal">
+        <div class="modal-content" style="min-width: 500px;">
+            <button class="close-btn" onclick="closeProxySettings()">&times;</button>
+            <div class="modal-header">
+                <h2 class="modal-title">🔧 Proxy Settings</h2>
+                <p>Configure your browsing experience</p>
+            </div>
+            
+            <div style="display: grid; gap: 20px;">
+                <div>
+                    <label class="form-label">Proxy Server</label>
+                    <select class="form-input" id="proxyServer">
+                        <option value="allorigins">AllOrigins (Recommended)</option>
+                        <option value="corsproxy">CORS Proxy</option>
+                        <option value="thingproxy">ThingProxy</option>
+                        <option value="custom">Custom Proxy</option>
+                    </select>
+                </div>
+                
+                <div id="customProxyDiv" style="display: none;">
+                    <label class="form-label">Custom Proxy URL</label>
+                    <input type="text" class="form-input" id="customProxyUrl" placeholder="https://your-proxy.com/">
+                </div>
+                
+                <div>
+                    <label class="form-label">Default Search Engine</label>
+                    <select class="form-input" id="searchEngine">
+                        <option value="google">Google</option>
+                        <option value="bing">Bing</option>
+                        <option value="duckduckgo">DuckDuckGo</option>
+                        <option value="startpage">Startpage</option>
+                    </select>
+                </div>
+                
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <input type="checkbox" id="blockAds" checked style="width: auto;">
+                    <label for="blockAds" style="color: rgba(255, 255, 255, 0.8);">Block advertisements</label>
+                </div>
+                
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <input type="checkbox" id="enableJs" checked style="width: auto;">
+                    <label for="enableJs" style="color: rgba(255, 255, 255, 0.8);">Enable JavaScript</label>
+                </div>
+                
+                <button class="form-button" onclick="saveProxySettings()">Save Settings</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Panel Modal -->
+    <div class="modal" id="adminModal">
+        <div class="modal-content" style="min-width: 600px; max-height: 80vh; overflow-y: auto;">
+            <button class="close-btn" onclick="closeAdminPanel()">&times;</button>
+            <div class="modal-header">
+                <h2 class="modal-title">🛡️ Admin Dashboard</h2>
+                <p>System Administration Panel</p>
+            </div>
+            
+            <div style="display: grid; gap: 30px;">
+                <!-- User Management -->
+                <div style="background: rgba(255, 255, 255, 0.05); padding: 20px; border-radius: 15px;">
+                    <h3 style="color: #ffd700; margin-bottom: 15px;">👥 User Management</h3>
+                    <div id="usersList" style="margin-bottom: 15px;">
+                        <!-- Users will be populated here -->
+                    </div>
+                    <button class="form-button" onclick="refreshUsers()" style="width: auto; padding: 8px 16px;">Refresh Users</button>
+                </div>
+
+                <!-- Game Management -->
+                <div style="background: rgba(255, 255, 255, 0.05); padding: 20px; border-radius: 15px;">
+                    <h3 style="color: #ffd700; margin-bottom: 15px;">🎮 Game Management</h3>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+                        <div>
+                            <label class="form-label">Game Title</label>
+                            <input type="text" class="form-input" id="newGameTitle" placeholder="Enter game name">
+                        </div>
+                        <div>
+                            <label class="form-label">Category</label>
+                            <select class="form-input" id="newGameCategory">
+                                <option>Action</option>
+                                <option>Arcade</option>
+                                <option>Puzzle</option>
+                                <option>Racing</option>
+                                <option>Sports</option>
+                                <option>Adventure</option>
+                                <option>Strategy</option>
+                                <option>Classic</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div style="margin-bottom: 15px;">
+                        <label class="form-label">Game Icon (emoji)</label>
+                        <input type="text" class="form-input" id="newGameIcon" placeholder="🎮" maxlength="2">
+                    </div>
+                    <button class="form-button" onclick="addNewGame()" style="width: auto; padding: 8px 16px;">Add Game</button>
+                </div>
+
+                <!-- Site Statistics -->
+                <div style="background: rgba(255, 255, 255, 0.05); padding: 20px; border-radius: 15px;">
+                    <h3 style="color: #ffd700; margin-bottom: 15px;">📊 Site Statistics</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px;">
+                        <div style="text-align: center; padding: 15px; background: rgba(102, 126, 234, 0.1); border-radius: 10px;">
+                            <div style="font-size: 2em; margin-bottom: 5px;" id="totalUsers">0</div>
+                            <div style="color: rgba(255, 255, 255, 0.7);">Total Users</div>
+                        </div>
+                        <div style="text-align: center; padding: 15px; background: rgba(118, 75, 162, 0.1); border-radius: 10px;">
+                            <div style="font-size: 2em; margin-bottom: 5px;" id="totalGames">12</div>
+                            <div style="color: rgba(255, 255, 255, 0.7);">Total Games</div>
+                        </div>
+                        <div style="text-align: center; padding: 15px; background: rgba(255, 107, 107, 0.1); border-radius: 10px;">
+                            <div style="font-size: 2em; margin-bottom: 5px;" id="onlineUsers">1</div>
+                            <div style="color: rgba(255, 255, 255, 0.7);">Online Now</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- System Actions -->
+                <div style="background: rgba(255, 255, 255, 0.05); padding: 20px; border-radius: 15px;">
+                    <h3 style="color: #ffd700; margin-bottom: 15px;">⚙️ System Actions</h3>
+                    <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                        <button class="form-button" onclick="clearUserData()" style="width: auto; padding: 8px 16px; background: linear-gradient(45deg, #ff6b6b, #ee5a24);">Clear All Users</button>
+                        <button class="form-button" onclick="resetGames()" style="width: auto; padding: 8px 16px; background: linear-gradient(45deg, #ffa502, #ff6348);">Reset Games</button>
+                        <button class="form-button" onclick="exportData()" style="width: auto; padding: 8px 16px; background: linear-gradient(45deg, #2ed573, #1e90ff);">Export Data</button>
+                        <button class="form-button" onclick="openProxyBrowser()" style="width: auto; padding: 8px 16px; background: linear-gradient(45deg, #667eea, #764ba2);">Open Proxy Browser</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <p>&copy; PP games Unblock your potential.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Create animated starfield
+        function createStars() {
+            const starsContainer = document.getElementById('stars');
+            const numberOfStars = 150;
+
+            for (let i = 0; i < numberOfStars; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.width = star.style.height = Math.random() * 3 + 1 + 'px';
+                star.style.animationDelay = Math.random() * 3 + 's';
+                starsContainer.appendChild(star);
+            }
+        }
+
+        // User management
+        let currentUser = null;
+        let isFirstUser = false;
+
+        function openModal(type) {
+            document.getElementById('authModal').style.display = 'block';
+            if (type === 'login') {
+                switchToLogin();
+            } else {
+                switchToSignup();
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('authModal').style.display = 'none';
+        }
+
+        function switchToLogin() {
+            document.getElementById('modalTitle').textContent = 'Login';
+            document.getElementById('modalSubtitle').textContent = 'Access your gaming hub';
+            document.getElementById('loginForm').style.display = 'block';
+            document.getElementById('signupForm').style.display = 'none';
+        }
+
+        function switchToSignup() {
+            document.getElementById('modalTitle').textContent = 'Sign Up';
+            document.getElementById('modalSubtitle').textContent = 'Join the gaming community';
+            document.getElementById('loginForm').style.display = 'none';
+            document.getElementById('signupForm').style.display = 'block';
+        }
+
+        function handleLogin(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            const username = event.target[0].value;
+            const password = event.target[1].value;
+
+            // Simulate login (replace with real authentication)
+            if (username && password) {
+                // Check if this is the first user (admin)
+                const existingUsers = JSON.parse(localStorage.getItem('nexusUsers') || '[]');
+                const user = existingUsers.find(u => u.username === username || u.email === username);
+                
+                if (user || existingUsers.length === 0) {
+                    currentUser = user || {
+                        username: username,
+                        email: username.includes('@') ? username : `${username}@nexus.games`,
+                        joinDate: new Date().toISOString(),
+                        isAdmin: existingUsers.length === 0, // First user becomes admin
+                        userId: Date.now()
+                    };
+                    
+                    // If new user, add to users list
+                    if (!user) {
+                        existingUsers.push(currentUser);
+                        localStorage.setItem('nexusUsers', JSON.stringify(existingUsers));
+                    }
+                    
+                    // Store current session
+                    localStorage.setItem('nexusUser', JSON.stringify(currentUser));
+                    
+                    showLoggedInState();
+                    closeModal();
+                    
+                    if (currentUser.isAdmin) {
+                        showNotification('Welcome back, Admin! 👑', 'success');
+                    } else {
+                        showNotification('Welcome back! 🎮', 'success');
+                    }
+                } else {
+                    showNotification('Invalid credentials', 'error');
+                }
+            } else {
+                showNotification('Please fill in all fields', 'error');
+            }
+        }
+
+        function handleSignup(event) {
+            event.preventDefault();
+            const username = event.target[0].value;
+            const email = event.target[1].value;
+            const password = event.target[2].value;
+            const confirmPassword = event.target[3].value;
+
+            if (password !== confirmPassword) {
+                showNotification('Passwords do not match', 'error');
+                return;
+            }
+
+            if (username && email && password) {
+                // Check if this is the first user (admin)
+                const existingUsers = JSON.parse(localStorage.getItem('nexusUsers') || '[]');
+                const isFirstUser = existingUsers.length === 0;
+                
+                // Check if username/email already exists
+                const userExists = existingUsers.some(u => u.username === username || u.email === email);
+                if (userExists) {
+                    showNotification('Username or email already exists', 'error');
+                    return;
+                }
+                
+                currentUser = {
+                    username: username,
+                    email: email,
+                    joinDate: new Date().toISOString(),
+                    isAdmin: isFirstUser, // First user becomes admin
+                    userId: Date.now()
+                };
+                
+                // Add to users list
+                existingUsers.push(currentUser);
+                localStorage.setItem('nexusUsers', JSON.stringify(existingUsers));
+                
+                // Store current session
+                localStorage.setItem('nexusUser', JSON.stringify(currentUser));
+                
+                showLoggedInState();
+                closeModal();
+                
+                if (isFirstUser) {
+                    showNotification('Account created! You are now the Admin 👑', 'success');
+                } else {
+                    showNotification('Account created successfully! PPlay safely user! 🚀', 'success');
+                }
+            } else {
+                showNotification('Please fill in all fields to begin PPlaying', 'error');
+            }
+        }
+
+        function logout() {
+            currentUser = null;
+            localStorage.removeItem('nexusUser');
+            showLoggedOutState();
+            showNotification('Logged out successfully. see you soon!', 'info');
+        }
+
+        function showLoggedInState() {
+            document.getElementById('authButtons').style.display = 'none';
+            document.getElementById('userInfo').style.display = 'flex';
+            document.getElementById('welcomeText').textContent = `Welcome, ${currentUser.username}!`;
+            
+            const userAvatar = document.getElementById('userAvatar');
+            userAvatar.textContent = currentUser.username.charAt(0).toUpperCase();
+            
+            // Show admin styling if admin
+            if (currentUser.isAdmin) {
+                userAvatar.className = 'user-avatar admin-avatar';
+                userAvatar.innerHTML = `${currentUser.username.charAt(0).toUpperCase()}<div class="admin-badge">👑</div>`;
+                document.querySelectorAll('.admin-only').forEach(el => {
+                    el.style.display = 'block';
+                });
+            } else {
+                userAvatar.className = 'user-avatar';
+                document.querySelectorAll('.admin-only').forEach(el => {
+                    el.style.display = 'none';
+                });
+            }
+            
+            // Show protected content
+            document.getElementById('guestMessage').style.display = 'none';
+            document.querySelectorAll('.protected-content').forEach(el => {
+                el.style.display = 'block';
+            });
+            
+            // Load games
+            loadSampleGames();
+        }
+
+        function showLoggedOutState() {
+            document.getElementById('authButtons').style.display = 'flex';
+            document.getElementById('userInfo').style.display = 'none';
+            
+            // Hide admin features
+            document.querySelectorAll('.admin-only').forEach(el => {
+                el.style.display = 'none';
+            });
+            
+            // Hide protected content
+            document.getElementById('guestMessage').style.display = 'block';
+            document.querySelectorAll('.protected-content').forEach(el => {
+                el.style.display = 'none';
+            });
+        }
+
+        function showNotification(message, type) {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 15px 25px;
+                border-radius: 10px;
+                color: white;
+                font-weight: bold;
+                z-index: 10000;
+                animation: slideIn 0.3s ease;
+                background: ${type === 'success' ? 'linear-gradient(45deg, #2ed573, #1e90ff)' : 
+                           type === 'error' ? 'linear-gradient(45deg, #ff4757, #ff3838)' : 
+                           'linear-gradient(45deg, #667eea, #764ba2)'};
+            `;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+
+            // Remove after 3 seconds
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+
+        function searchGames() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const gameCards = document.querySelectorAll('.game-card:not(.add-game-card)');
+            
+            gameCards.forEach(card => {
+                const title = card.querySelector('.game-title')?.textContent.toLowerCase();
+                const category = card.querySelector('.game-category')?.textContent.toLowerCase();
+                
+                if (title?.includes(query) || category?.includes(query) || query === '') {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        function loadSampleGames() {
+            const gamesGrid = document.getElementById('gamesGrid');
+            const sampleGames = [
+                {icon: '🎯', title: 'Slope', category: 'Arcade'},
+                {icon: '🟩', title: 'Wordle', category: 'Word'},
+                {icon: '🧩', title: '2048', category: 'Puzzle'},
+                {icon: '🐍', title: 'Snake', category: 'Classic'},
+                {icon: '🎾', title: 'Pong', category: 'Sports'},
+                {icon: '🚀', title: 'Asteroids', category: 'Arcade'},
+                {icon: '🏃', title: 'Run 3', category: 'Runner'},
+                {icon: '🧱', title: 'Tetris', category: 'Puzzle'},
+                {icon: '⚽', title: 'Soccer', category: 'Sports'},
+                {icon: '🎮', title: 'Retro Bowl', category: 'Sports'},
+                {icon: '🏎️', title: 'Racing', category: 'Racing'},
+                {icon: '⚔️', title: 'Sword Fight', category: 'Action'}
+            ];
+
+            // Add custom games
+            const customGames = JSON.parse(localStorage.getItem('customGames') || '[]');
+            const allGames = [...sampleGames, ...customGames];
+
+            // Clear existing games (except add card)
+            const addCard = gamesGrid.querySelector('.add-game-card');
+            gamesGrid.innerHTML = '';
+            
+            // Add all games
+            allGames.forEach((game, index) => {
+                const gameCard = document.createElement('div');
+                gameCard.className = 'game-card loading';
+                gameCard.style.animationDelay = `${index * 0.1}s`;
+                gameCard.innerHTML = `
+                    <div class="game-icon">${game.icon}</div>
+                    <div class="game-info">
+                        <div class="game-title">${game.title}</div>
+                        <div class="game-category">${game.category}</div>
+                    </div>
+                `;
+                gameCard.addEventListener('click', () => playGame(game.title));
+                gamesGrid.appendChild(gameCard);
+            });
+
+            // Re-add the add game card at the end
+            gamesGrid.appendChild(addCard);
+        }
+
+        // Admin Panel Functions
+        function openAdminPanel() {
+            if (!currentUser || !currentUser.isAdmin) {
+                showNotification('Access denied. Admin privileges required.', 'error');
+                return;
+            }
+            document.getElementById('adminModal').style.display = 'block';
+            refreshAdminData();
+        }
+
+        function closeAdminPanel() {
+            document.getElementById('adminModal').style.display = 'none';
+        }
+
+        function refreshAdminData() {
+            refreshUsers();
+            updateStats();
+        }
+
+        function refreshUsers() {
+            const users = JSON.parse(localStorage.getItem('nexusUsers') || '[]');
+            const usersList = document.getElementById('usersList');
+            
+            usersList.innerHTML = users.map(user => `
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: rgba(255, 255, 255, 0.05); border-radius: 8px; margin-bottom: 8px;">
+                    <div>
+                        <strong style="color: ${user.isAdmin ? '#ffd700' : '#667eea'};">
+                            ${user.username} ${user.isAdmin ? '👑' : ''}
+                        </strong>
+                        <div style="font-size: 0.8em; color: rgba(255, 255, 255, 0.6);">
+                            ${user.email} • Joined: ${new Date(user.joinDate).toLocaleDateString()}
+                        </div>
+                    </div>
+                    ${!user.isAdmin ? `<button onclick="deleteUser('${user.userId}')" style="background: #ff6b6b; border: none; color: white; padding: 5px 10px; border-radius: 5px; cursor: pointer;">Delete</button>` : ''}
+                </div>
+            `).join('');
+        }
+
+        function deleteUser(userId) {
+            if (!confirm('Are you sure you want to delete this user?')) return;
+            
+            let users = JSON.parse(localStorage.getItem('nexusUsers') || '[]');
+            users = users.filter(u => u.userId != userId);
+            localStorage.setItem('nexusUsers', JSON.stringify(users));
+            
+            refreshUsers();
+            updateStats();
+            showNotification('User deleted successfully', 'success');
+        }
+
+        function addNewGame() {
+            const title = document.getElementById('newGameTitle').value;
+            const category = document.getElementById('newGameCategory').value;
+            const icon = document.getElementById('newGameIcon').value;
+            
+            if (!title || !icon) {
+                showNotification('Please fill in all fields', 'error');
+                return;
+            }
+
+            // Get current games
+            let customGames = JSON.parse(localStorage.getItem('customGames') || '[]');
+            customGames.push({
+                icon: icon,
+                title: title,
+                category: category,
+                addedBy: currentUser.username,
+                dateAdded: new Date().toISOString()
+            });
+            
+            localStorage.setItem('customGames', JSON.stringify(customGames));
+            
+            // Clear form
+            document.getElementById('newGameTitle').value = '';
+            document.getElementById('newGameIcon').value = '';
+            
+            // Refresh games display
+            loadSampleGames();
+            updateStats();
+            showNotification(`Game "${title}" added successfully!`, 'success');
+        }
+
+        function updateStats() {
+            const users = JSON.parse(localStorage.getItem('nexusUsers') || '[]');
+            const customGames = JSON.parse(localStorage.getItem('customGames') || '[]');
+            
+            document.getElementById('totalUsers').textContent = users.length;
+            document.getElementById('totalGames').textContent = 12 + customGames.length;
+            document.getElementById('onlineUsers').textContent = currentUser ? 1 : 0;
+        }
+
+        function clearUserData() {
+            if (!confirm('This will delete ALL users except you. Are you sure?')) return;
+            
+            const currentUserData = JSON.parse(localStorage.getItem('nexusUser'));
+            localStorage.setItem('nexusUsers', JSON.stringify([currentUserData]));
+            
+            refreshUsers();
+            updateStats();
+            showNotification('All users cleared (except admin)', 'success');
+        }
+
+        function resetGames() {
+            if (!confirm('This will remove all custom games. Are you sure?')) return;
+            
+            localStorage.removeItem('customGames');
+            loadSampleGames();
+            updateStats();
+            showNotification('Games reset to default', 'success');
+        }
+
+        function exportData() {
+            const data = {
+                users: JSON.parse(localStorage.getItem('nexusUsers') || '[]'),
+                games: JSON.parse(localStorage.getItem('customGames') || '[]'),
+                exportDate: new Date().toISOString()
+            };
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'nexus-games-data.json';
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            showNotification('Data exported successfully', 'success');
+        }
+
+        // Proxy Browser Functions
+        let proxySettings = {
+            server: 'allorigins',
+            searchEngine: 'google',
+            blockAds: true,
+            enableJs: true,
+            customProxy: ''
+        };
+
+        function openProxyBrowser() {
+            if (!currentUser || !currentUser.isAdmin) {
+                showNotification('Access denied. Admin privileges required.', 'error');
+                return;
+            }
+            document.getElementById('proxyModal').style.display = 'block';
+            loadProxySettings();
+        }
+
+        function closeProxyBrowser() {
+            document.getElementById('proxyModal').style.display = 'none';
+            // Clear iframe for security
+            document.getElementById('proxyFrame').src = 'about:blank';
+        }
+
+        function loadProxySettings() {
+            const saved = localStorage.getItem('proxySettings');
+            if (saved) {
+                proxySettings = { ...proxySettings, ...JSON.parse(saved) };
+            }
+        }
+
+        function handleProxyEnter(event) {
+            if (event.key === 'Enter') {
+                proxyNavigate();
+            }
+        }
+
+        function proxyNavigate() {
+            const url = document.getElementById('proxyUrl').value.trim();
+            if (!url) return;
+
+            let targetUrl = url;
+            
+            // Auto-add https if no protocol specified
+            if (!url.startsWith('http://') && !url.startsWith('https://')) {
+                // Check if it looks like a search query vs URL
+                if (url.includes(' ') || (!url.includes('.') && !url.includes(':'))) {
+                    // It's a search query
+                    const searchUrls = {
+                        google: `https://www.google.com/search?q=${encodeURIComponent(url)}`,
+                        bing: `https://www.bing.com/search?q=${encodeURIComponent(url)}`,
+                        duckduckgo: `https://duckduckgo.com/?q=${encodeURIComponent(url)}`,
+                        startpage: `https://www.startpage.com/sp/search?query=${encodeURIComponent(url)}`
+                    };
+                    targetUrl = searchUrls[proxySettings.searchEngine] || searchUrls.google;
+                } else {
+                    targetUrl = 'https://' + url;
+                }
+            }
+
+            // Hide welcome screen
+            document.getElementById('proxyWelcome').style.display = 'none';
+            
+            // Load through proxy
+            loadProxyUrl(targetUrl);
+        }
+
+        function loadProxyUrl(url) {
+            const iframe = document.getElementById('proxyFrame');
+            let proxyUrl;
+
+            switch (proxySettings.server) {
+                case 'allorigins':
+                    proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
+                    break;
+                case 'corsproxy':
+                    proxyUrl = `https://corsproxy.io/?${encodeURIComponent(url)}`;
+                    break;
+                case 'thingproxy':
+                    proxyUrl = `https://thingproxy.freeboard.io/fetch/${encodeURIComponent(url)}`;
+                    break;
+                case 'custom':
+                    proxyUrl = proxySettings.customProxy + encodeURIComponent(url);
+                    break;
+                default:
+                    proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
+            }
+
+            try {
+                iframe.src = proxyUrl;
+                document.getElementById('proxyUrl').value = url;
+                
+                // Add to history (simple implementation)
+                addProxyHistory(url);
+                
+                showNotification('Loading...', 'info');
+            } catch (error) {
+                showNotification('Failed to load URL', 'error');
+                console.error('Proxy error:', error);
+            }
+        }
+
+        function quickProxy(url) {
+            document.getElementById('proxyUrl').value = url;
+            proxyNavigate();
+        }
+
+        function proxyBack() {
+            const iframe = document.getElementById('proxyFrame');
+            try {
+                iframe.contentWindow.history.back();
+            } catch (e) {
+                showNotification('Cannot go back', 'error');
+            }
+        }
+
+        function proxyForward() {
+            const iframe = document.getElementById('proxyFrame');
+            try {
+                iframe.contentWindow.history.forward();
+            } catch (e) {
+                showNotification('Cannot go forward', 'error');
+            }
+        }
+
+        function proxyReload() {
+            const currentUrl = document.getElementById('proxyUrl').value;
+            if (currentUrl) {
+                loadProxyUrl(currentUrl);
+            }
+        }
+
+        function toggleFullscreen() {
+            const modal = document.getElementById('proxyModal');
+            const modalContent = modal.querySelector('.modal-content');
+            
+            if (modalContent.dataset.fullscreen === 'true') {
+                // Exit fullscreen
+                modalContent.style.position = 'absolute';
+                modalContent.style.top = '50%';
+                modalContent.style.left = '50%';
+                modalContent.style.transform = 'translate(-50%, -50%)';
+                modalContent.style.width = '90vw';
+                modalContent.style.height = '90vh';
+                modalContent.style.zIndex = '';
+                modalContent.dataset.fullscreen = 'false';
+            } else {
+                // Enter fullscreen
+                modalContent.style.position = 'fixed';
+                modalContent.style.top = '0';
+                modalContent.style.left = '0';
+                modalContent.style.transform = 'none';
+                modalContent.style.width = '100vw';
+                modalContent.style.height = '100vh';
+                modalContent.style.zIndex = '10001';
+                modalContent.dataset.fullscreen = 'true';
+            }
+        }
+
+        function addProxyHistory(url) {
+            let history = JSON.parse(localStorage.getItem('proxyHistory') || '[]');
+            history.unshift({ url, timestamp: Date.now() });
+            history = history.slice(0, 50); // Keep last 50 entries
+            localStorage.setItem('proxyHistory', JSON.stringify(history));
+        }
+
+        function openProxySettings() {
+            document.getElementById('proxySettingsModal').style.display = 'block';
+            
+            // Load current settings
+            document.getElementById('proxyServer').value = proxySettings.server;
+            document.getElementById('searchEngine').value = proxySettings.searchEngine;
+            document.getElementById('blockAds').checked = proxySettings.blockAds;
+            document.getElementById('enableJs').checked = proxySettings.enableJs;
+            document.getElementById('customProxyUrl').value = proxySettings.customProxy;
+            
+            // Show/hide custom proxy input
+            toggleCustomProxy();
+        }
+
+        function closeProxySettings() {
+            document.getElementById('proxySettingsModal').style.display = 'none';
+        }
+
+        function saveProxySettings() {
+            proxySettings = {
+                server: document.getElementById('proxyServer').value,
+                searchEngine: document.getElementById('searchEngine').value,
+                blockAds: document.getElementById('blockAds').checked,
+                enableJs: document.getElementById('enableJs').checked,
+                customProxy: document.getElementById('customProxyUrl').value
+            };
+            
+            localStorage.setItem('proxySettings', JSON.stringify(proxySettings));
+            closeProxySettings();
+            showNotification('Proxy settings saved', 'success');
+        }
+
+        function toggleCustomProxy() {
+            const server = document.getElementById('proxyServer').value;
+            const customDiv = document.getElementById('customProxyDiv');
+            customDiv.style.display = server === 'custom' ? 'block' : 'none';
+        }
+
+        // Add event listener for proxy server dropdown
+        document.addEventListener('DOMContentLoaded', function() {
+            const proxyServerSelect = document.getElementById('proxyServer');
+            if (proxyServerSelect) {
+                proxyServerSelect.addEventListener('change', toggleCustomProxy);
+            }
+        });
+
+        // Roblox Player Functions
+        let robloxSettings = {
+            graphics: 10,
+            volume: 50,
+            fullscreen: false,
+            chat: true,
+            safety: true,
+            region: 'auto'
+        };
+
+        function openRobloxPlayer() {
+            if (!currentUser) {
+                showNotification('Please log in to access Roblox', 'error');
+                openModal('login');
+                return;
+            }
+            document.getElementById('robloxModal').style.display = 'block';
+            loadRobloxSettings();
+            updateRobloxStatus('Ready to Play', '🟢');
+        }
+
+        function closeRobloxPlayer() {
+            document.getElementById('robloxModal').style.display = 'none';
+            // Clear iframe for performance
+            document.getElementById('robloxFrame').src = 'about:blank';
+            document.getElementById('robloxFrame').style.display = 'none';
+            document.getElementById('robloxWelcome').style.display = 'block';
+            document.getElementById('robloxGameGrid').style.display = 'none';
+        }
+
+        function loadRobloxSettings() {
+            const saved = localStorage.getItem('robloxSettings');
+            if (saved) {
+                robloxSettings = { ...robloxSettings, ...JSON.parse(saved) };
+            }
+        }
+
+        function updateRobloxStatus(message, emoji = '🟢') {
+            document.getElementById('robloxStatus').innerHTML = `${emoji} ${message}`;
+        }
+
+        function loadRobloxHome() {
+            document.getElementById('robloxWelcome').style.display = 'block';
+            document.getElementById('robloxFrame').style.display = 'none';
+            document.getElementById('robloxGameGrid').style.display = 'none';
+            updateRobloxStatus('Home', '🏠');
+        }
+
+        function loadRobloxGames() {
+            document.getElementById('robloxWelcome').style.display = 'none';
+            document.getElementById('robloxFrame').style.display = 'none';
+            document.getElementById('robloxGameGrid').style.display = 'block';
+            
+            const gameGrid = document.getElementById('robloxGameGrid');
+            gameGrid.innerHTML = `
+                <h2 style="color: #00a2ff; margin-bottom: 20px; text-align: center;">Popular Roblox Games</h2>
+                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px;">
+                    ${generateRobloxGameCards()}
+                </div>
+            `;
+            updateRobloxStatus('Browsing Games', '🎮');
+        }
+
+        function generateRobloxGameCards() {
+            const games = [
+                { name: 'Adopt Me!', players: '200K+', icon: '🐾', description: 'Adopt pets, decorate your home, and play with friends!' },
+                { name: 'Brookhaven RP', players: '150K+', icon: '🏘️', description: 'Roleplay in the town of Brookhaven with friends!' },
+                { name: 'Arsenal', players: '80K+', icon: '🔫', description: 'Fast-paced FPS with unique weapons and maps!' },
+                { name: 'Tower of Hell', players: '60K+', icon: '🗼', description: 'Climb the tower and reach the top!' },
+                { name: 'Murder Mystery 2', players: '50K+', icon: '🔍', description: 'Find clues to solve the mystery!' },
+                { name: 'Jailbreak', players: '45K+', icon: '🚔', description: 'Escape prison or stop criminals as police!' },
+                { name: 'MeepCity', players: '40K+', icon: '🏠', description: 'Customize your estate and party with friends!' },
+                { name: 'Natural Disaster Survival', players: '35K+', icon: '🌪️', description: 'Survive various natural disasters!' },
+                { name: 'Work at a Pizza Place', players: '30K+', icon: '🍕', description: 'Work together to run a pizza restaurant!' },
+                { name: 'Piggy', players: '25K+', icon: '🐷', description: 'Escape or hunt in this thrilling horror game!' },
+                { name: 'Bloxburg', players: '20K+', icon: '🏡', description: 'Build and design your dream house!' },
+                { name: 'Phantom Forces', players: '18K+', icon: '⚔️', description: 'Tactical FPS with realistic weapons!' }
+            ];
+
+            return games.map(game => `
+                <div onclick="playRobloxGame('${game.name}')" style="background: white; border-radius: 15px; padding: 20px; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); border: 2px solid transparent;">
+                    <div style="font-size: 3em; text-align: center; margin-bottom: 15px;">${game.icon}</div>
+                    <h3 style="color: #00a2ff; margin-bottom: 8px; text-align: center; font-size: 1.2em;">${game.name}</h3>
+                    <p style="color: #666; font-size: 0.9em; margin-bottom: 10px; text-align: center; line-height: 1.4;">${game.description}</p>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px;">
+                        <span style="background: #e8f4fd; color: #00a2ff; padding: 4px 12px; border-radius: 15px; font-size: 0.8em; font-weight: bold;">${game.players} playing</span>
+                        <button onclick="event.stopPropagation(); playRobloxGame('${game.name}')" style="background: linear-gradient(45deg, #00a2ff, #0066cc); color: white; border: none; padding: 8px 16px; border-radius: 20px; cursor: pointer; font-weight: bold;">▶ Play</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function playRobloxGame(gameName) {
+            updateRobloxStatus(`Loading ${gameName}...`, '⏳');
+            
+            document.getElementById('robloxWelcome').style.display = 'none';
+            document.getElementById('robloxGameGrid').style.display = 'none';
+            document.getElementById('robloxFrame').style.display = 'block';
+            
+            // Use working game alternatives and proxies
+            let gameUrl;
+            
+            switch(gameName) {
+                case 'Adopt Me!':
+                    gameUrl = 'https://now.gg/play/roblox-corporation/2349/adopt-me';
+                    break;
+                case 'Brookhaven RP':
+                    gameUrl = 'https://now.gg/play/roblox-corporation/2349/brookhaven-rp';
+                    break;
+                case 'Arsenal':
+                    gameUrl = 'https://now.gg/play/roblox-corporation/2349/arsenal';
+                    break;
+                case 'Tower of Hell':
+                    gameUrl = 'https://now.gg/play/roblox-corporation/2349/tower-of-hell';
+                    break;
+                case 'Murder Mystery 2':
+                    gameUrl = 'https://poki.com/en/g/murder-mystery-2';
+                    break;
+                case 'Jailbreak':
+                    gameUrl = 'https://now.gg/play/roblox-corporation/2349/jailbreak';
+                    break;
+                case 'MeepCity':
+                    gameUrl = 'https://now.gg/play/roblox-corporation/2349/meepcity';
+                    break;
+                case 'Natural Disaster Survival':
+                    gameUrl = 'https://poki.com/en/g/natural-disaster-survival';
+                    break;
+                case 'Work at a Pizza Place':
+                    gameUrl = 'https://now.gg/play/roblox-corporation/2349/work-at-a-pizza-place';
+                    break;
+                case 'Piggy':
+                    gameUrl = 'https://now.gg/play/roblox-corporation/2349/piggy';
+                    break;
+                case 'Bloxburg':
+                    gameUrl = 'https://now.gg/play/roblox-corporation/2349/welcome-to-bloxburg';
+                    break;
+                case 'Phantom Forces':
+                    gameUrl = 'https://now.gg/play/roblox-corporation/2349/phantom-forces';
+                    break;
+                default:
+                    // Fallback to a working Roblox clone/alternative
+                    gameUrl = 'https://roblox.gg/';
+            }
+            
+            // Try direct loading first
+            try {
+                document.getElementById('robloxFrame').src = gameUrl;
+                updateRobloxStatus(`Playing ${gameName}`, '🎮');
+                showNotification(`Loading ${gameName}...`, 'info');
+            } catch (error) {
+                // Fallback to proxy if direct loading fails
+                const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(gameUrl)}`;
+                document.getElementById('robloxFrame').src = proxyUrl;
+                updateRobloxStatus(`Playing ${gameName} (via proxy)`, '🎮');
+                showNotification(`Loading ${gameName} through proxy...`, 'info');
+            }
+        }
+
+        function playPopularGame(gameName) {
+            playRobloxGame(gameName);
+        }
+
+        function loadRobloxCreate() {
+            document.getElementById('robloxWelcome').style.display = 'none';
+            document.getElementById('robloxGameGrid').style.display = 'none';
+            document.getElementById('robloxFrame').style.display = 'block';
+            
+            // Load a working Roblox Studio alternative
+            const createUrl = 'https://web.roblox.com/develop';
+            document.getElementById('robloxFrame').src = createUrl;
+            
+            updateRobloxStatus('Roblox Studio', '🛠️');
+        }
+
+        function loadRobloxRobux() {
+            document.getElementById('robloxWelcome').style.display = 'none';
+            document.getElementById('robloxGameGrid').style.display = 'none';
+            document.getElementById('robloxFrame').style.display = 'block';
+            
+            // Load Robux page
+            const robuxUrl = 'https://web.roblox.com/robux';
+            document.getElementById('robloxFrame').src = robuxUrl;
+            
+            updateRobloxStatus('Robux Store', '💎');
+        }
+
+        function handleRobloxSearch(event) {
+            if (event.key === 'Enter') {
+                searchRoblox();
+            }
+        }
+
+        function searchRoblox() {
+            const query = document.getElementById('robloxSearch').value.trim();
+            if (!query) return;
+
+            updateRobloxStatus(`Searching: ${query}`, '🔍');
+            
+            document.getElementById('robloxWelcome').style.display = 'none';
+            document.getElementById('robloxGameGrid').style.display = 'none';
+            document.getElementById('robloxFrame').style.display = 'block';
+            
+            // Search alternatives that work
+            let searchUrl;
+            
+            // Try different search approaches
+            if (query.toLowerCase().includes('roblox')) {
+                searchUrl = `https://web.roblox.com/search/games?keyword=${encodeURIComponent(query.replace('roblox', '').trim())}`;
+            } else {
+                // Use alternative gaming search
+                searchUrl = `https://www.crazygames.com/search?query=${encodeURIComponent(query + ' roblox')}`;
+            }
+            
+            document.getElementById('robloxFrame').src = searchUrl;
+        }
+
+        function toggleRobloxFullscreen() {
+            const modal = document.getElementById('robloxModal');
+            const modalContent = modal.querySelector('.modal-content');
+            
+            if (modalContent.dataset.fullscreen === 'true') {
+                // Exit fullscreen
+                modalContent.style.position = 'absolute';
+                modalContent.style.top = '50%';
+                modalContent.style.left = '50%';
+                modalContent.style.transform = 'translate(-50%, -50%)';
+                modalContent.style.width = '';
+                modalContent.style.height = '';
+                modalContent.style.minWidth = '95vw';
+                modalContent.style.minHeight = '95vh';
+                modalContent.style.maxWidth = '98vw';
+                modalContent.style.maxHeight = '98vh';
+                modalContent.style.zIndex = '';
+                modalContent.dataset.fullscreen = 'false';
+            } else {
+                // Enter fullscreen
+                modalContent.style.position = 'fixed';
+                modalContent.style.top = '0';
+                modalContent.style.left = '0';
+                modalContent.style.transform = 'none';
+                modalContent.style.width = '100vw';
+                modalContent.style.height = '100vh';
+                modalContent.style.minWidth = '100vw';
+                modalContent.style.minHeight = '100vh';
+                modalContent.style.maxWidth = '100vw';
+                modalContent.style.maxHeight = '100vh';
+                modalContent.style.zIndex = '10001';
+                modalContent.dataset.fullscreen = 'true';
+            }
+        }
+
+        function openRobloxSettings() {
+            document.getElementById('robloxSettingsModal').style.display = 'block';
+            
+            // Load current settings
+            document.getElementById('robloxGraphics').value = robloxSettings.graphics;
+            document.getElementById('robloxVolume').value = robloxSettings.volume;
+            document.getElementById('robloxFullscreen').checked = robloxSettings.fullscreen;
+            document.getElementById('robloxChat').checked = robloxSettings.chat;
+            document.getElementById('robloxSafety').checked = robloxSettings.safety;
+            document.getElementById('robloxRegion').value = robloxSettings.region;
+            
+            updateVolumeDisplay();
+        }
+
+        function closeRobloxSettings() {
+            document.getElementById('robloxSettingsModal').style.display = 'none';
+        }
+
+        function updateVolumeDisplay() {
+            const volume = document.getElementById('robloxVolume').value;
+            document.getElementById('volumeDisplay').textContent = volume + '%';
+        }
+
+        function saveRobloxSettings() {
+            robloxSettings = {
+                graphics: document.getElementById('robloxGraphics').value,
+                volume: document.getElementById('robloxVolume').value,
+                fullscreen: document.getElementById('robloxFullscreen').checked,
+                chat: document.getElementById('robloxChat').checked,
+                safety: document.getElementById('robloxSafety').checked,
+                region: document.getElementById('robloxRegion').value
+            };
+            
+            localStorage.setItem('robloxSettings', JSON.stringify(robloxSettings));
+            closeRobloxSettings();
+            showNotification('Roblox settings saved', 'success');
+        }
+
+        // Add volume slider event listener
+        document.addEventListener('DOMContentLoaded', function() {
+            const volumeSlider = document.getElementById('robloxVolume');
+            if (volumeSlider) {
+                volumeSlider.addEventListener('input', updateVolumeDisplay);
+            }
+        });
+
+        function playGame(gameName) {
+            showNotification(`Loading ${gameName}...`, 'info');
+            // Here you would implement actual game loading
+            console.log(`Playing ${gameName}`);
+        }
+
+        // Check for existing user session on page load
+        function checkUserSession() {
+            const savedUser = localStorage.getItem('nexusUser');
+            if (savedUser) {
+                currentUser = JSON.parse(savedUser);
+                showLoggedInState();
+            } else {
+                showLoggedOutState();
+            }
+        }
+
+        // Smooth scrolling for navigation
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Close modal when clicking outside
+        window.addEventListener('click', function(event) {
+            const authModal = document.getElementById('authModal');
+            const adminModal = document.getElementById('adminModal');
+            const proxyModal = document.getElementById('proxyModal');
+            const proxySettingsModal = document.getElementById('proxySettingsModal');
+            const robloxModal = document.getElementById('robloxModal');
+            const robloxSettingsModal = document.getElementById('robloxSettingsModal');
+            
+            if (event.target === authModal) {
+                closeModal();
+            }
+            if (event.target === adminModal) {
+                closeAdminPanel();
+            }
+            if (event.target === proxyModal) {
+                closeProxyBrowser();
+            }
+            if (event.target === proxySettingsModal) {
+                closeProxySettings();
+            }
+            if (event.target === robloxModal) {
+                closeRobloxPlayer();
+            }
+            if (event.target === robloxSettingsModal) {
+                closeRobloxSettings();
+            }
+        });
+
+        // Enter key support for search
+        document.getElementById('searchInput').addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                searchGames();
+            }
+        });
+
+        // CSS animation keyframes
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Initialize on load
+        window.addEventListener('load', () => {
+            createStars();
+            checkUserSession();
+        });
+
+        /*
+        ===========================================
+        GAME CARD TEMPLATE FOR ADDING NEW GAMES
+        ===========================================
+        
+        Copy this template to add new games:
+
+        <div class="game-card loading" style="animation-delay: 0.Xs">
+            <div class="game-icon">🎮</div>
+            <div class="game-info">
+                <div class="game-title">Your Game Title</div>
+                <div class="game-category">Category</div>
+            </div>
+        </div>
+
+        Available Game Icons (copy these emojis):
+        🎯 🎮 🟩 🧩 🐍 🎾 🚀 🧱 ⚽ 🏎️ ⚔️ 🎪 🎲 🃏 🎰 🏆 ⭐ 💎 🔥 ⚡
+        🕹️ 🎨 🧸 🎭 🎪 🎈 🎊 🎉 🏁 🎯 🎱 🎳 🏸 🏓 🥅 ⛳ 🏑 🏒 🥍 🏹
+
+        Popular Game Categories:
+        - Action
+        - Arcade  
+        - Puzzle
+        - Racing
+        - Sports
+        - Adventure
+        - Strategy
+        - Classic
+        - Multiplayer
+        - Educational
+
+        To add games:
+        1. Find the gamesGrid in the loadSampleGames() function
+        2. Add your game object to the sampleGames array:
+           {icon: '🎯', title: 'Game Name', category: 'Category'}
+        3. The game will automatically appear with click functionality
+
+        Example:
+        {icon: '🏆', title: 'Champion League', category: 'Sports'},
+        {icon: '🎨', title: 'Art Creator', category: 'Creative'},
+        {icon: '🔥', title: 'Fire Fighter', category: 'Action'}
+        */
+    </script>
+</body>
+</html>
