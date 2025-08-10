@@ -1895,7 +1895,14 @@
         return;
     }
 
-            showNotification(`Loading ${gameName}...`, 'info');
+    if (gameName === 'Slope') {
+        window.open('circuit-collision.github.io/slope', '_blank');
+        showNotification('Opening slope...', 'Arcade');
+        return;
+    }       
+    
+    
+    showNotification(`Loading ${gameName}...`, 'info');
             // Here you would implement actual game loading
             console.log(`Playing ${gameName}`);
 }
