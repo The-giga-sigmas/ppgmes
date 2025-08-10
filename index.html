@@ -1218,7 +1218,7 @@
                 {icon: '⚽', title: 'Soccer', category: 'Sports'},
                 {icon: '🎮', title: 'Retro Bowl', category: 'Sports'},
                 {icon: '🏎️', title: 'Racing', category: 'Racing'},
-                {icon: '⚔️', title: 'Sword Fight', category: 'Action'}
+                {icon: '⚔️', title: 'Sword Fight', category: 'Action'},
             ];
 
             // Add custom games
@@ -1901,7 +1901,15 @@
         return;
     }       
     
-    
+     if (gameName === 'Wordle') {
+        window.open('https://wordleunlimited.org', '_blank');
+        showNotification('Opening wordle...', 'Word');
+        return;
+    }
+
+
+
+
     showNotification(`Loading ${gameName}...`, 'info');
             // Here you would implement actual game loading
             console.log(`Playing ${gameName}`);
